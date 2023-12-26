@@ -16,5 +16,8 @@
     "start": "node IS.js"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "swagger-autogen": "^2.23.7"
+  }
 }

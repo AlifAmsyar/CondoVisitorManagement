@@ -8,24 +8,11 @@ const path = require('path');
 
 //swagger API
 const swaggerUi = require('swagger-ui-express');
-const swaggerJsdoc = require('swagger-jsdoc');
-
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Condo Visitor Management System',
-      version: '1.0.0',
-      description: 'Condo Visitor',
-      host: 'assignmentcondovisitormanagement.azurewebsites.net'
-    },
-  },
-  apis: ['*/*IS.js'], // Path to the files containing your OpenAPI specs, replace * with the folder containing your route handlers
-};
+const swaggerDocument = require('./swagger.json');
 
 const specs = swaggerJsdoc(options);
-const swaggerDocument = require('./swagger.json');
-app.use(cors());
+
+// app.use(cors());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //express.json

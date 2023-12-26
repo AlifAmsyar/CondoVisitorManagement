@@ -3,7 +3,7 @@ info:
   version: '1.0.0'
   title: Hotel Visitor Management API
   description: API for managing hotel visitors
-host: 'assignmentcondovisitormanagement.azurewebsites.net'
+host: 'localhost:2000'
 basePath: '/'
 schemes:
   - 'http'
