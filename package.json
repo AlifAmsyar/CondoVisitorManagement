@@ -1,0 +1,19 @@
+{
+  "dependencies": {
+    "express": "^4.18.2",
+    "json": "^11.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "^5.9.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.0"
+  },
+  "name": "assignment",
+  "description": "��#\u0000 \u0000A\u0000s\u0000s\u0000i\u0000g\u0000n\u0000m\u0000e\u0000n\u0000t\u0000\r\u0000 \u0000#\u0000 \u0000A\u0000s\u0000s\u0000i\u0000g\u0000n\u0000m\u0000e\u0000n\u0000t\u0000\r\u0000 \u0000",
+  "version": "1.0.0",
+  "main": "IS.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
