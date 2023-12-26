@@ -9,12 +9,6 @@ const path = require('path');
 //express.json
 app.use(express.json())
 
-// app.use(express.static(path.join(__dirname,'public')));
-
-// app.get('/',(req, res) =>{
-//     res.sendFile(path.join(__dirname,'public', 'login.html'));
-// });
-
 // MongoDB setup
 const { MongoClient } = require('mongodb');
 const uri = 'mongodb+srv://AlifAmsyar:7B4TLlyjiwatYV2d@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
@@ -39,7 +33,6 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   visitDetailCollection = db.collection('visitDetailCollectionName');
   //securityCollection = db.collection('securityCollectionName');
   hostCollection = db.collection('hostCollectionName');
-  
   
   // Start the server or perform other operations
 
@@ -415,7 +408,6 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   //     });
   // });
   
-
   app.listen(port, () => {
     console.log('Example app listening on port ${port}');
   });

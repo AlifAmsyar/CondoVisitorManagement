@@ -16,6 +16,5 @@
     "start": "node IS.js"
   },
   "author": "",
-  "license": "ISC",
-  "devDependencies": {}
+  "license": "ISC"
 }
