@@ -15,17 +15,14 @@ app.use(express.json())
 //     res.sendFile(path.join(__dirname,'public', 'login.html'));
 // });
 
-
-
 // MongoDB setup
 const { MongoClient } = require('mongodb');
 const uri = 'mongodb+srv://AlifAmsyar:7B4TLlyjiwatYV2d@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
 
 const swaggerUi = require('swagger-ui-express');
-// const swaggerDocument = require('./swagger.json');
+const swaggerDocument = require('./swagger.json');
 app.use(cors());
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //const client = new MongoClient(uri);
 
@@ -33,7 +30,6 @@ let visitDetailCollection;
 //let securityCollection;
 let hostCollection;
 let adminCollection;
-
 
 MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(client => {
