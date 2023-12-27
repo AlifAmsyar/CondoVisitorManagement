@@ -9,10 +9,17 @@ const path = require('path');
 //swagger API
 const swaggerUi = require('swagger-ui-express');
 const swaggerDocument = require('./swagger.json');
-
+const options ={
+  definition: {
+    openapi:'3.0.0',
+    info:{
+      title:'MyVMS API',
+      version:'1.0.0',
+    },
+  },
+  apis:['./IS.js'],
+}
 const specs = swaggerJsdoc(options);
-
-// app.use(cors());
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 //express.json
@@ -196,30 +203,118 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   app.use(express.json());
 
   //Login User
-  app.post('/login', (req, res) => {
-    console.log(req.body);
-  
-    login(req.body.Username, req.body.Password)
-      .then((result) => {
-        res.json(result.user); // Return user information without generating a token
-      })
-      .catch((error) => {
-        res.status(400).send(error.message);
-      });
-  });
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     summary: User Login
+ *     description: Allows a user to log in with a username and password.
+ *     tags:
+ *       - Authentication
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: Login credentials
+ *         required: true
+ *         schema:
+ *           type: object
+ *           required:
+ *             - Username
+ *             - Password
+ *           properties:
+ *             Username:
+ *               type: string
+ *             Password:
+ *               type: string
+ *               format: password
+ *     responses:
+ *       '200':
+ *         description: Login successful
+ *         schema:
+ *           type: object
+ *           properties:
+ *             user:
+ *               $ref: '#/definitions/User' // Reference to the User schema definition
+ *       '400':
+ *         description: Bad request, when the user credentials are not provided or are incorrect
+ *       '500':
+ *         description: Internal server error
+ */
+
+app.post('/login', (req, res) => {
+  console.log(req.body);
+
+  login(req.body.Username, req.body.Password)
+    .then((result) => {
+      res.json(result.user); // Return user information without generating a token
+    })
+    .catch((error) => {
+      res.status(400).send(error.message);
+    });
+});
+
   
   //Register User
-  app.post('/register', (req, res) => {
-    console.log(req.body);
+  /**
+ * @swagger
+ * /register:
+ *   post:
+ *     summary: User Registration
+ *     description: Allows a new user to register.
+ *     tags:
+ *       - User
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: body
+ *         description: Registration data
+ *         required: true
+ *         schema:
+ *           type: object
+ *           required:
+ *             - Username
+ *             - Password
+ *             - name
+ *             - email
+ *           properties:
+ *             Username:
+ *               type: string
+ *             Password:
+ *               type: string
+ *               format: password
+ *             name:
+ *               type: string
+ *             email:
+ *               type: string
+ *               format: email
+ *     responses:
+ *       '200':
+ *         description: Registration successful
+ *       '400':
+ *         description: Bad request, when the registration data is incomplete
+ *       '500':
+ *         description: Internal server error
+ */
 
-    register(req.body.Username, req.body.Password, req.body.name, req.body.email)
-      .then((result) => {
-        res.send(result);
-      })
-      .catch((error) => {
+app.post('/register', (req, res) => {
+  console.log(req.body);
+
+  register(req.body.Username, req.body.Password, req.body.name, req.body.email)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
       res.status(400).send(error.message);
-      });
-  });
+    });
+});
+
 
   // //Logout
   // app.post('/logout', (req, res) => {
@@ -228,43 +323,164 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   // });
 
   //Create Visit
-  
-  app.post('/create-visit', async (req, res) => {
-    try {
-      const {visitorName, gender, citizenship, visitorAddress, phoneNo, vehicleNo, hostId, visitDate,place , purpose } = req.body;
+/**
+ * @swagger
+ * /create-visit:
+ *   post:
+ *     summary: Create a new visit
+ *     description: Allows the creation of a new visit with visitor and host details.
+ *     tags:
+ *       - Visitor
+ *     consumes:
+ *       - application/json
+ *     produces:
+ *       - application/json
+ *     parameters:
+ *       - in: body
+ *         name: visit
+ *         description: Object containing visit details
+ *         required: true
+ *         schema:
+ *           type: object
+ *           required:
+ *             - visitorName
+ *             - gender
+ *             - citizenship
+ *             - visitorAddress
+ *             - phoneNo
+ *             - vehicleNo
+ *             - hostId
+ *             - visitDate
+ *             - place
+ *             - purpose
+ *           properties:
+ *             visitorName:
+ *               type: string
+ *             gender:
+ *               type: string
+ *               enum: [male, female, other]
+ *             citizenship:
+ *               type: string
+ *             visitorAddress:
+ *               type: string
+ *             phoneNo:
+ *               type: string
+ *             vehicleNo:
+ *               type: string
+ *             hostId:
+ *               type: string
+ *             visitDate:
+ *               type: string
+ *               format: date-time
+ *             place:
+ *               type: string
+ *             purpose:
+ *               type: string
+ *     responses:
+ *       '200':
+ *         description: Visit created successfully
+ *       '400':
+ *         description: Bad request, when required fields are missing
+ *       '500':
+ *         description: Internal server error
+ */
 
-      // Ensure all required fields are present
-      if (!visitorName || !gender || !hostId || !visitDate || !purpose || !place || !citizenship || !visitorAddress || !phoneNo || !vehicleNo) {
-        throw new Error('Missing required fields');
-      }
+app.post('/create-visit', async (req, res) => {
+  try {
+    const {visitorName, gender, citizenship, visitorAddress, phoneNo, vehicleNo, hostId, visitDate, place, purpose } = req.body;
 
-      const db = client.db('CondoVisitorManagement');
-      const visitDetailCollection = db.collection('visitDetailCollectionName');
-
-      // Insert the visit data into the visitDetailCollection
-      const visitData = {
-        visitorName,
-        gender,
-        citizenship,
-        visitorAddress,
-        phoneNo,
-        vehicleNo,
-        hostId,
-        visitDate,
-        place,
-        purpose
-      };
-      await visitDetailCollection.insertOne(visitData);
-
-      res.send('Visit created successfully');
-    } catch (error) {
-      console.error('Error creating visit:', error);
-      res.status(500).send('An error occurred while creating the visit');
+    // Ensure all required fields are present
+    if (!visitorName || !gender || !hostId || !visitDate || !purpose || !place || !citizenship || !visitorAddress || !phoneNo || !vehicleNo) {
+      throw new Error('Missing required fields');
     }
-  });
+
+    const db = client.db('CondoVisitorManagement');
+    const visitDetailCollection = db.collection('visitDetailCollectionName');
+
+    // Insert the visit data into the visitDetailCollection
+    const visitData = {
+      visitorName,
+      gender,
+      citizenship,
+      visitorAddress,
+      phoneNo,
+      vehicleNo,
+      hostId,
+      visitDate,
+      place,
+      purpose
+    };
+    await visitDetailCollection.insertOne(visitData);
+
+    res.send('Visit created successfully');
+  } catch (error) {
+    console.error('Error creating visit:', error);
+    res.status(500).send('An error occurred while creating the visit');
+  }
+});
 
  // Update visitor (only admin)
- app.patch('/update-visit/:visitName',verifyToken, (req, res) => {
+ /**
+ * @swagger
+ * /update-visit/{visitName}:
+ *   patch:
+ *     summary: Update a specific visit
+ *     description: Allows updating specific visit details.
+ *     tags:
+ *       - Visitor
+ *     parameters:
+ *       - in: path
+ *         name: visitName
+ *         required: true
+ *         description: The name or ID of the visit to update
+ *         schema:
+ *           type: string
+ *       - in: header
+ *         name: Authorization
+ *         description: Bearer token for authentication
+ *         required: true
+ *         type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               visitorName:
+ *                 type: string
+ *               gender:
+ *                 type: string
+ *                 enum: [male, female, other]
+ *               citizenship:
+ *                 type: string
+ *               visitorAddress:
+ *                 type: string
+ *               phoneNo:
+ *                 type: string
+ *               vehicleNo:
+ *                 type: string
+ *               hostId:
+ *                 type: string
+ *               visitDate:
+ *                 type: string
+ *                 format: date-time
+ *               place:
+ *                 type: string
+ *               purpose:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Visit updated successfully
+ *       '400':
+ *         description: Bad request, when no fields provided for update
+ *       '404':
+ *         description: Visit not found
+ *       '500':
+ *         description: Internal server error
+ */
+
+app.patch('/update-visit/:visitName', verifyToken, (req, res) => {
   const visitName = req.params.visitName;
   const {visitorName, gender, citizenship, visitorAddress, phoneNo, vehicleNo, hostId, visitDate, place, purpose } = req.body;
 
@@ -305,34 +521,91 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     });
 });
 
+
   // Delete visit (only admin)
-  app.delete('/delete-visit/:visitDetailId',verifyToken, (req, res) => {
-    const visitDetailId = req.params.visitDetailId;
-  
-    visitDetailCollection
-      .deleteOne({ _id: new ObjectId(visitDetailId) })
-      .then(() => {
-        res.send('Visit detail deleted successfully');
-      })
-      .catch((error) => {
-        console.error('Error deleting visit detail:', error);
-        res.status(500).send('An error occurred while deleting the visit detail');
-      });
-  });
+  /**
+ * @swagger
+ * /delete-visit/{visitDetailId}:
+ *   delete:
+ *     summary: Delete a specific visit detail
+ *     description: Allows deleting a specific visit detail.
+ *     tags:
+ *       - Visitor
+ *     parameters:
+ *       - in: path
+ *         name: visitDetailId
+ *         required: true
+ *         description: The ID of the visit detail to delete
+ *         schema:
+ *           type: string
+ *       - in: header
+ *         name: Authorization
+ *         description: Bearer token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: Visit detail deleted successfully
+ *       '500':
+ *         description: Internal server error
+ */
+
+app.delete('/delete-visit/:visitDetailId', verifyToken, (req, res) => {
+  const visitDetailId = req.params.visitDetailId;
+
+  visitDetailCollection
+    .deleteOne({ _id: new ObjectId(visitDetailId) })
+    .then(() => {
+      res.send('Visit detail deleted successfully');
+    })
+    .catch((error) => {
+      console.error('Error deleting visit detail:', error);
+      res.status(500).send('An error occurred while deleting the visit detail');
+    });
+});
+
   
   // Read visit details (only admin)  
-  app.get('/visit-details',verifyToken, (req, res) => {
-    visitDetailCollection
-      .find({})
-      .toArray()
-      .then((visitDetails) => {
-        res.json(visitDetails);
-      })
-      .catch((error) => {
-        console.error('Error retrieving visit details:', error);
-        res.status(500).send('An error occurred while retrieving visit details');
-      });
-  });
+ /**
+ * @swagger
+ * /visit-details:
+ *   get:
+ *     summary: Get all visit details
+ *     description: Retrieves all visit details.
+ *     tags:
+ *       - Visitor
+ *     parameters:
+ *       - in: header
+ *         name: Authorization
+ *         description: Bearer token for authentication
+ *         required: true
+ *         type: string
+ *     responses:
+ *       '200':
+ *         description: List of visit details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/VisitDetail'
+ *       '500':
+ *         description: Internal server error
+ */
+
+app.get('/visit-details', verifyToken, (req, res) => {
+  visitDetailCollection
+    .find({})
+    .toArray()
+    .then((visitDetails) => {
+      res.json(visitDetails);
+    })
+    .catch((error) => {
+      console.error('Error retrieving visit details:', error);
+      res.status(500).send('An error occurred while retrieving visit details');
+    });
+});
+
 
   // //Register Security
   // app.post('/register-security', (req, res) => {
@@ -355,31 +628,111 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   // });
   
   //Register Admin
-  app.post('/register-admin', (req, res) => {
-    console.log(req.body);
-  
-    registerAdmin(req.body.Username, req.body.Password, req.body.name, req.body.email)
-      .then((result) => {
-        res.send(result);
-      })
-      .catch((error) => {
-        res.status(400).send(error.message);
-      });
-  });
+ /**
+ * @swagger
+ * /register-admin:
+ *   post:
+ *     summary: Register admin
+ *     description: Allows registration of admin users.
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               Username:
+ *                 type: string
+ *               Password:
+ *                 type: string
+ *               name:
+ *                 type: string
+ *               email:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Registration successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *       '400':
+ *         description: Bad request or missing fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+
+app.post('/register-admin', (req, res) => {
+  console.log(req.body);
+
+  registerAdmin(req.body.Username, req.body.Password, req.body.name, req.body.email)
+    .then((result) => {
+      res.send(result);
+    })
+    .catch((error) => {
+      res.status(400).send(error.message);
+    });
+});
+
 
   //Login Admin
-  app.post('/login-Admin', (req, res) => {
-    console.log(req.body);
-  
-    Adminlogin(req.body.Username, req.body.Password)
-      .then((result) => {
-        let token = generateToken(result);
-        res.send(token);
-      })
-      .catch((error) => {
-        res.status(400).send(error.message);
-      });
-  });
+ /**
+ * @swagger
+ * /login-Admin:
+ *   post:
+ *     summary: Admin login
+ *     description: Allows an administrator to log in.
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               Username:
+ *                 type: string
+ *               Password:
+ *                 type: string
+ *     responses:
+ *       '200':
+ *         description: Login successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *       '400':
+ *         description: Bad request or invalid credentials
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ */
+
+app.post('/login-Admin', (req, res) => {
+  console.log(req.body);
+
+  Adminlogin(req.body.Username, req.body.Password)
+    .then((result) => {
+      let token = generateToken(result);
+      res.send(token);
+    })
+    .catch((error) => {
+      res.status(400).send(error.message);
+    });
+});
+
   
   // //Login Security
   // app.post('/login-security', (req, res) => {
