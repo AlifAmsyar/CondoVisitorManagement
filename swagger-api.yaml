@@ -1,8 +1,8 @@
 swagger: '2.0'
 info:
   version: '1.0.0'
-  title: Hotel Visitor Management API
-  description: API for managing hotel visitors
+  title: Condo Visitor Management API
+  description: API for managing condo visitors
 host: 'localhost:2000'
 basePath: '/'
 schemes:
