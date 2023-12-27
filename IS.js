@@ -22,186 +22,183 @@ const options ={
 const specs = swaggerJsdoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-//express.json
-app.use(express.json())
+// Express setup
+app.use(express.json());
 
 // MongoDB setup
 const { MongoClient } = require('mongodb');
 const uri = 'mongodb+srv://AlifAmsyar:7B4TLlyjiwatYV2d@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
 
-//const client = new MongoClient(uri);
+// //const client = new MongoClient(uri);
 
-let visitDetailCollection;
-//let securityCollection;
-let hostCollection;
-let adminCollection;
+// let visitDetailCollection;
+// //let securityCollection;
+// let hostCollection;
+// let adminCollection;
 
-MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-.then(client => {
-  console.log('Connected to MongoDB'); 
-  const db = client.db('CondoVisitorManagement');
-  adminCollection = db.collection('adminCollection');
-  visitDetailCollection = db.collection('visitDetailCollectionName');
-  //securityCollection = db.collection('securityCollectionName');
-  hostCollection = db.collection('hostCollectionName');
+// MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+// .then(client => {
+//   console.log('Connected to MongoDB'); 
+//   const db = client.db('CondoVisitorManagement');
+//   adminCollection = db.collection('adminCollection');
+//   visitDetailCollection = db.collection('visitDetailCollectionName');
+//   //securityCollection = db.collection('securityCollectionName');
+//   hostCollection = db.collection('hostCollectionName');
   
-  // Start the server or perform other operations
+//   // Start the server or perform other operations
 
-  const { ObjectId } = require('mongodb');
+//   const { ObjectId } = require('mongodb');
 
-  ////Function User Login
-  async function login(reqUsername, reqPassword) {
-    const client = new MongoClient(uri);
-    try {
-      await client.connect();
+//   ////Function User Login
+//   async function login(reqUsername, reqPassword) {
+//     const client = new MongoClient(uri);
+//     try {
+//       await client.connect();
   
-      // Validate the request payload
-      if (!reqUsername || !reqPassword) {
-        throw new Error('Missing required fields');
-      }
+//       // Validate the request payload
+//       if (!reqUsername || !reqPassword) {
+//         throw new Error('Missing required fields');
+//       }
   
-      let matchuser = await hostCollection.findOne({ Username: reqUsername });
+//       let matchuser = await hostCollection.findOne({ Username: reqUsername });
   
-      if (!matchuser) {
-        throw new Error('User not found!');
-      }
-      if (matchuser.Password === reqPassword) {
-        return {
-          user: matchuser,
-        };
-      } else {
-        throw new Error('Invalid password');
-      }
-    } catch (error) {
-      console.error('Login Error:', error);
-      throw new Error('An error occurred during login.');
-    } finally {
-      await client.close();
-    }
-  }
+//       if (!matchuser) {
+//         throw new Error('User not found!');
+//       }
+//       if (matchuser.Password === reqPassword) {
+//         return {
+//           user: matchuser,
+//         };
+//       } else {
+//         throw new Error('Invalid password');
+//       }
+//     } catch (error) {
+//       console.error('Login Error:', error);
+//       throw new Error('An error occurred during login.');
+//     } finally {
+//       await client.close();
+//     }
+//   }
 
-  //Function Admin Login
-  async function Adminlogin(reqAdminUsername, reqAdminPassword) {
-   const client = new MongoClient(uri);
-   try {
-     await client.connect();
+//   //Function Admin Login
+//   async function Adminlogin(reqAdminUsername, reqAdminPassword) {
+//    const client = new MongoClient(uri);
+//    try {
+//      await client.connect();
 
-     // Validate the request payload
-     if (!reqAdminUsername || !reqAdminPassword) {
-       throw new Error('Missing required fields');
-     }
-     let matchuser = await adminCollection.findOne({ Username: reqAdminUsername });
+//      // Validate the request payload
+//      if (!reqAdminUsername || !reqAdminPassword) {
+//        throw new Error('Missing required fields');
+//      }
+//      let matchuser = await adminCollection.findOne({ Username: reqAdminUsername });
 
-     if (!matchuser) {
-       throw new Error('User not found!');
-     }
-     if (matchuser.Password === reqAdminPassword) {
-       const token = generateToken(matchuser);
-       return {
-        user: matchuser,
-        token: token,
-       };
-     } else {
-       throw new Error('Invalid password');
-     }
-   } catch (error) {
-     console.error('Login Error:', error);
-     throw new Error('An error occurred during login.');
-   } finally {
-     await client.close();
-   }
-  }
+//      if (!matchuser) {
+//        throw new Error('User not found!');
+//      }
+//      if (matchuser.Password === reqAdminPassword) {
+//        const token = generateToken(matchuser);
+//        return {
+//         user: matchuser,
+//         token: token,
+//        };
+//      } else {
+//        throw new Error('Invalid password');
+//      }
+//    } catch (error) {
+//      console.error('Login Error:', error);
+//      throw new Error('An error occurred during login.');
+//    } finally {
+//      await client.close();
+//    }
+//   }
  
-  //Function Admin Register
-  async function registerAdmin(reqAdminUsername, reqAdminPassword, reqAdminName, reqAdminEmail) {
-    const client = new MongoClient(uri);
-    try {
-      await client.connect();
+//   //Function Admin Register
+//   async function registerAdmin(reqAdminUsername, reqAdminPassword, reqAdminName, reqAdminEmail) {
+//     const client = new MongoClient(uri);
+//     try {
+//       await client.connect();
  
  
-      // Validate the request payload
-      if (!reqAdminUsername || !reqAdminPassword || !reqAdminName || !reqAdminEmail) {
-        throw new Error('Missing required fields');
-      }
+//       // Validate the request payload
+//       if (!reqAdminUsername || !reqAdminPassword || !reqAdminName || !reqAdminEmail) {
+//         throw new Error('Missing required fields');
+//       }
  
-      await adminCollection.insertOne({
-        Username: reqAdminUsername,
-        Password: reqAdminPassword,
-        name: reqAdminName,
-        email: reqAdminEmail,
-      });
+//       await adminCollection.insertOne({
+//         Username: reqAdminUsername,
+//         Password: reqAdminPassword,
+//         name: reqAdminName,
+//         email: reqAdminEmail,
+//       });
  
-      return 'Registration Complete!!';
-      } catch (error) {
-      console.error('Registration Error:', error);
-      throw new Error('An error occurred during registration.');
-     } finally {
-      await client.close();
-    }
-  }
+//       return 'Registration Complete!!';
+//       } catch (error) {
+//       console.error('Registration Error:', error);
+//       throw new Error('An error occurred during registration.');
+//      } finally {
+//       await client.close();
+//     }
+//   }
 
-  //Function User Register
-  async function register(reqUsername, reqPassword, reqName, reqEmail) {
-   const client = new MongoClient(uri);
-   try {
-     await client.connect();
+//   //Function User Register
+//   async function register(reqUsername, reqPassword, reqName, reqEmail) {
+//    const client = new MongoClient(uri);
+//    try {
+//      await client.connect();
 
 
-     // Validate the request payload
-     if (!reqUsername || !reqPassword || !reqName || !reqEmail) {
-       throw new Error('Missing required fields');
-     }
+//      // Validate the request payload
+//      if (!reqUsername || !reqPassword || !reqName || !reqEmail) {
+//        throw new Error('Missing required fields');
+//      }
 
-     await hostCollection.insertOne({
-       Username: reqUsername,
-       Password: reqPassword,
-       name: reqName,
-       email: reqEmail,
-     });
+//      await hostCollection.insertOne({
+//        Username: reqUsername,
+//        Password: reqPassword,
+//        name: reqName,
+//        email: reqEmail,
+//      });
 
-     return 'Registration Complete!!';
-     } catch (error) {
-     console.error('Registration Error:', error);
-     throw new Error('An error occurred during registration.');
-    } finally {
-     await client.close();
-   }
-  }
+//      return 'Registration Complete!!';
+//      } catch (error) {
+//      console.error('Registration Error:', error);
+//      throw new Error('An error occurred during registration.');
+//     } finally {
+//      await client.close();
+//    }
+//   }
 
-  //Function Generate Token
-  function generateToken(user) {
-    const payload = 
-    {
-      username: user.AdminUsername,
-    };
-    const token = jwt.sign
-    (
-      payload, 'inipassword', 
-      { expiresIn: '1h' }
-    );
-    return token;
-  }
+//   //Function Generate Token
+//   function generateToken(user) {
+//     const payload = 
+//     {
+//       username: user.AdminUsername,
+//     };
+//     const token = jwt.sign
+//     (
+//       payload, 'inipassword', 
+//       { expiresIn: '1h' }
+//     );
+//     return token;
+//   }
   
-  //Function Verify
-  function verifyToken(req, res, next) {
-    let header = req.headers.authorization;
-    console.log(header);
+//   //Function Verify
+//   function verifyToken(req, res, next) {
+//     let header = req.headers.authorization;
+//     console.log(header);
   
-    let token = header.split(' ')[1];
+//     let token = header.split(' ')[1];
   
-    jwt.verify(token, 'inipassword', function (err, decoded) {
-      if (err) {
-        return res.status(401).send('Invalid Token');
-      }
+//     jwt.verify(token, 'inipassword', function (err, decoded) {
+//       if (err) {
+//         return res.status(401).send('Invalid Token');
+//       }
   
-      req.user = decoded;
-      next();
-    });
-  }
+//       req.user = decoded;
+//       next();
+//     });
+//   }
   
-  // Express setup
-  app.use(express.json());
-
   //Login User
 /**
  * @swagger
@@ -766,9 +763,8 @@ app.post('/login-Admin', (req, res) => {
   // });
   
   app.listen(port, () => {
-    console.log('Server running on port ${port}');
+    console.log(`Server running on port ${port}`);
   });
-})
-  .catch(err => {
-  console.error('Failed to connect to MongoDB:',err);
-});
+  // .catch(err => {
+  //   console.error('Failed to connect to MongoDB:',err);
+  // });
