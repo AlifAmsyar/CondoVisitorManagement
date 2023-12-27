@@ -14,7 +14,7 @@
   "version": "1.0.0",
   "main": "IS.js",
   "scripts": {
-    "start": "node swagger.js"
+    "start": "node IS.js"
   },
   "author": "",
   "license": "ISC",
