@@ -1,35 +1,49 @@
 const { error } = require('console');
-const express = require('express');
-const app = express();
-const port = 2000;
+const express = require('express')
+const app = express()
+//const port = 2000
+const port = process.env.PORT || 2000;
 const jwt = require('jsonwebtoken');
-const path = require('path'); 
+const cors = require('cors');
+// const path = require('path'); 
 
-//swagger API
-const swaggerUi = require('swagger-ui-express');
-const swaggerJsdoc = require('swagger-jsdoc');
-const options ={
-  definition: {
-    openapi:'3.0.0',
-    info:{
-      title:'MyVMS API',
-      version:'1.0.0',
-    },
-  },
-  apis: [path.resolve(__dirname, './routes/*IS.js')],,
-}
-const swaggerSpec = swaggerJsdoc(options);
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
+//express.json
+app.use(express.json())
+// app.use(cors());
 
 // MongoDB setup
 const { MongoClient } = require('mongodb');
-const uri = 'mongodb+srv://AlifAmsyar:7B4TLlyjiwatYV2d@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
+//const uri = 'mongodb+srv://Bazli:Bazli35@cluster0.maezorf.mongodb.net/CondoVisitorManagement';
+const uri = 'mongodb+srv://AlifAmsyar:1UO9fTtNLaQyaOJv@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
+//const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+
+const swaggerUi = require('swagger-ui-express');
+// const swaggerDocument = require('./swagger.js');
+// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
+const swaggerJsdoc = require('swagger-jsdoc');
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'MyVMS API',
+      version: '1.0.0',
+    },
+  },
+  apis: ['./swagger.js'],
+};
+
+const swaggerSpec = swaggerJsdoc(options);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //const client = new MongoClient(uri);
+
 let visitDetailCollection;
 //let securityCollection;
 let hostCollection;
 let adminCollection;
+
 
 MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(client => {
@@ -40,12 +54,13 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   //securityCollection = db.collection('securityCollectionName');
   hostCollection = db.collection('hostCollectionName');
   
+  
   // Start the server or perform other operations
 
   const { ObjectId } = require('mongodb');
 
   ////Function User Login
-  async function login(reqUsername, reqPassword) {
+  async function Userlogin(reqUsername, reqPassword) {
     const client = new MongoClient(uri);
     try {
       await client.connect();
@@ -194,119 +209,34 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     });
   }
   
+  // Express setup
+  app.use(express.json());
+
   //Login User
-/**
- * @swagger
- * /login:
- *   post:
- *     summary: User Login
- *     description: Allows a user to log in with a username and password.
- *     tags:
- *       - Authentication
- *     consumes:
- *       - application/json
- *     produces:
- *       - application/json
- *     parameters:
- *       - in: body
- *         name: body
- *         description: Login credentials
- *         required: true
- *         schema:
- *           type: object
- *           required:
- *             - Username
- *             - Password
- *           properties:
- *             Username:
- *               type: string
- *             Password:
- *               type: string
- *               format: password
- *     responses:
- *       '200':
- *         description: Login successful
- *         schema:
- *           type: object
- *           properties:
- *             user:
- *               $ref: '#/definitions/User' // Reference to the User schema definition
- *       '400':
- *         description: Bad request, when the user credentials are not provided or are incorrect
- *       '500':
- *         description: Internal server error
- */
-
-app.post('/login', (req, res) => {
-  console.log(req.body);
-
-  login(req.body.Username, req.body.Password)
-    .then((result) => {
-      res.json(result.user); // Return user information without generating a token
-    })
-    .catch((error) => {
-      res.status(400).send(error.message);
-    });
-});
-
+  app.post('/Userlogin', (req, res) => {
+    console.log(req.body);
+  
+    Userlogin(req.body.Username, req.body.Password)
+      .then((result) => {
+        res.json(result.user); // Return user information without generating a token
+      })
+      .catch((error) => {
+        res.status(400).send(error.message);
+      });
+  });
   
   //Register User
-  /**
- * @swagger
- * /register:
- *   post:
- *     summary: User Registration
- *     description: Allows a new user to register.
- *     tags:
- *       - User
- *     consumes:
- *       - application/json
- *     produces:
- *       - application/json
- *     parameters:
- *       - in: body
- *         name: body
- *         description: Registration data
- *         required: true
- *         schema:
- *           type: object
- *           required:
- *             - Username
- *             - Password
- *             - name
- *             - email
- *           properties:
- *             Username:
- *               type: string
- *             Password:
- *               type: string
- *               format: password
- *             name:
- *               type: string
- *             email:
- *               type: string
- *               format: email
- *     responses:
- *       '200':
- *         description: Registration successful
- *       '400':
- *         description: Bad request, when the registration data is incomplete
- *       '500':
- *         description: Internal server error
- */
+  app.post('/register', (req, res) => {
+    console.log(req.body);
 
-app.post('/register', (req, res) => {
-  console.log(req.body);
-
-  register(req.body.Username, req.body.Password, req.body.name, req.body.email)
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((error) => {
+    register(req.body.Username, req.body.Password, req.body.name, req.body.email)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((error) => {
       res.status(400).send(error.message);
-    });
-});
-
+      });
+  });
 
   // //Logout
   // app.post('/logout', (req, res) => {
@@ -315,164 +245,43 @@ app.post('/register', (req, res) => {
   // });
 
   //Create Visit
-/**
- * @swagger
- * /create-visit:
- *   post:
- *     summary: Create a new visit
- *     description: Allows the creation of a new visit with visitor and host details.
- *     tags:
- *       - Visitor
- *     consumes:
- *       - application/json
- *     produces:
- *       - application/json
- *     parameters:
- *       - in: body
- *         name: visit
- *         description: Object containing visit details
- *         required: true
- *         schema:
- *           type: object
- *           required:
- *             - visitorName
- *             - gender
- *             - citizenship
- *             - visitorAddress
- *             - phoneNo
- *             - vehicleNo
- *             - hostId
- *             - visitDate
- *             - place
- *             - purpose
- *           properties:
- *             visitorName:
- *               type: string
- *             gender:
- *               type: string
- *               enum: [male, female, other]
- *             citizenship:
- *               type: string
- *             visitorAddress:
- *               type: string
- *             phoneNo:
- *               type: string
- *             vehicleNo:
- *               type: string
- *             hostId:
- *               type: string
- *             visitDate:
- *               type: string
- *               format: date-time
- *             place:
- *               type: string
- *             purpose:
- *               type: string
- *     responses:
- *       '200':
- *         description: Visit created successfully
- *       '400':
- *         description: Bad request, when required fields are missing
- *       '500':
- *         description: Internal server error
- */
+  
+  app.post('/create-visit', async (req, res) => {
+    try {
+      const {visitorName, gender, citizenship, visitorAddress, phoneNo, vehicleNo, hostId, visitDate,place , purpose } = req.body;
 
-app.post('/create-visit', async (req, res) => {
-  try {
-    const {visitorName, gender, citizenship, visitorAddress, phoneNo, vehicleNo, hostId, visitDate, place, purpose } = req.body;
+      // Ensure all required fields are present
+      if (!visitorName || !gender || !hostId || !visitDate || !purpose || !place || !citizenship || !visitorAddress || !phoneNo || !vehicleNo) {
+        throw new Error('Missing required fields');
+      }
 
-    // Ensure all required fields are present
-    if (!visitorName || !gender || !hostId || !visitDate || !purpose || !place || !citizenship || !visitorAddress || !phoneNo || !vehicleNo) {
-      throw new Error('Missing required fields');
+      const db = client.db('CondoVisitorManagement');
+      const visitDetailCollection = db.collection('visitDetailCollectionName');
+
+      // Insert the visit data into the visitDetailCollection
+      const visitData = {
+        visitorName,
+        gender,
+        citizenship,
+        visitorAddress,
+        phoneNo,
+        vehicleNo,
+        hostId,
+        visitDate,
+        place,
+        purpose
+      };
+      await visitDetailCollection.insertOne(visitData);
+
+      res.send('Visit created successfully');
+    } catch (error) {
+      console.error('Error creating visit:', error);
+      res.status(500).send('An error occurred while creating the visit');
     }
-
-    const db = client.db('CondoVisitorManagement');
-    const visitDetailCollection = db.collection('visitDetailCollectionName');
-
-    // Insert the visit data into the visitDetailCollection
-    const visitData = {
-      visitorName,
-      gender,
-      citizenship,
-      visitorAddress,
-      phoneNo,
-      vehicleNo,
-      hostId,
-      visitDate,
-      place,
-      purpose
-    };
-    await visitDetailCollection.insertOne(visitData);
-
-    res.send('Visit created successfully');
-  } catch (error) {
-    console.error('Error creating visit:', error);
-    res.status(500).send('An error occurred while creating the visit');
-  }
-});
+  });
 
  // Update visitor (only admin)
- /**
- * @swagger
- * /update-visit/{visitName}:
- *   patch:
- *     summary: Update a specific visit
- *     description: Allows updating specific visit details.
- *     tags:
- *       - Visitor
- *     parameters:
- *       - in: path
- *         name: visitName
- *         required: true
- *         description: The name or ID of the visit to update
- *         schema:
- *           type: string
- *       - in: header
- *         name: Authorization
- *         description: Bearer token for authentication
- *         required: true
- *         type: string
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               visitorName:
- *                 type: string
- *               gender:
- *                 type: string
- *                 enum: [male, female, other]
- *               citizenship:
- *                 type: string
- *               visitorAddress:
- *                 type: string
- *               phoneNo:
- *                 type: string
- *               vehicleNo:
- *                 type: string
- *               hostId:
- *                 type: string
- *               visitDate:
- *                 type: string
- *                 format: date-time
- *               place:
- *                 type: string
- *               purpose:
- *                 type: string
- *     responses:
- *       '200':
- *         description: Visit updated successfully
- *       '400':
- *         description: Bad request, when no fields provided for update
- *       '404':
- *         description: Visit not found
- *       '500':
- *         description: Internal server error
- */
-
-app.patch('/update-visit/:visitName', verifyToken, (req, res) => {
+ app.patch('/update-visit/:visitName',verifyToken, (req, res) => {
   const visitName = req.params.visitName;
   const {visitorName, gender, citizenship, visitorAddress, phoneNo, vehicleNo, hostId, visitDate, place, purpose } = req.body;
 
@@ -499,105 +308,48 @@ app.patch('/update-visit/:visitName', verifyToken, (req, res) => {
     .then((result) => {
       if (!result.value) {
         // No matching document found
-        throw new Error('Visit not found');
+        throw new Error('Done Update');
       }
       res.send('Visit updated successfully');
     })
     .catch((error) => {
       console.error('Error updating visit:', error);
-      if (error.message === 'Visit not found') {
-        res.status(404).send('Visit not found');
+      if (error.message === 'Done Update') {
+        res.status(404).send('Done Update');
       } else {
         res.status(500).send('An error occurred while updating the visit');
       }
     });
 });
 
-
   // Delete visit (only admin)
-  /**
- * @swagger
- * /delete-visit/{visitDetailId}:
- *   delete:
- *     summary: Delete a specific visit detail
- *     description: Allows deleting a specific visit detail.
- *     tags:
- *       - Visitor
- *     parameters:
- *       - in: path
- *         name: visitDetailId
- *         required: true
- *         description: The ID of the visit detail to delete
- *         schema:
- *           type: string
- *       - in: header
- *         name: Authorization
- *         description: Bearer token for authentication
- *         required: true
- *         type: string
- *     responses:
- *       '200':
- *         description: Visit detail deleted successfully
- *       '500':
- *         description: Internal server error
- */
-
-app.delete('/delete-visit/:visitDetailId', verifyToken, (req, res) => {
-  const visitDetailId = req.params.visitDetailId;
-
-  visitDetailCollection
-    .deleteOne({ _id: new ObjectId(visitDetailId) })
-    .then(() => {
-      res.send('Visit detail deleted successfully');
-    })
-    .catch((error) => {
-      console.error('Error deleting visit detail:', error);
-      res.status(500).send('An error occurred while deleting the visit detail');
-    });
-});
-
+  app.delete('/delete-visit/:visitDetailId',verifyToken, (req, res) => {
+    const visitDetailId = req.params.visitDetailId;
+  
+    visitDetailCollection
+      .deleteOne({ _id: new ObjectId(visitDetailId) })
+      .then(() => {
+        res.send('Visit detail deleted successfully');
+      })
+      .catch((error) => {
+        console.error('Error deleting visit detail:', error);
+        res.status(500).send('An error occurred while deleting the visit detail');
+      });
+  });
   
   // Read visit details (only admin)  
- /**
- * @swagger
- * /visit-details:
- *   get:
- *     summary: Get all visit details
- *     description: Retrieves all visit details.
- *     tags:
- *       - Visitor
- *     parameters:
- *       - in: header
- *         name: Authorization
- *         description: Bearer token for authentication
- *         required: true
- *         type: string
- *     responses:
- *       '200':
- *         description: List of visit details
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/VisitDetail'
- *       '500':
- *         description: Internal server error
- */
-
-app.get('/visit-details', verifyToken, (req, res) => {
-  visitDetailCollection
-    .find({})
-    .toArray()
-    .then((visitDetails) => {
-      res.json(visitDetails);
-    })
-    .catch((error) => {
-      console.error('Error retrieving visit details:', error);
-      res.status(500).send('An error occurred while retrieving visit details');
-    });
-});
-
+  app.get('/visit-details',verifyToken, (req, res) => {
+    visitDetailCollection
+      .find({})
+      .toArray()
+      .then((visitDetails) => {
+        res.json(visitDetails);
+      })
+      .catch((error) => {
+        console.error('Error retrieving visit details:', error);
+        res.status(500).send('An error occurred while retrieving visit details');
+      });
+  });
 
   // //Register Security
   // app.post('/register-security', (req, res) => {
@@ -620,111 +372,31 @@ app.get('/visit-details', verifyToken, (req, res) => {
   // });
   
   //Register Admin
- /**
- * @swagger
- * /register-admin:
- *   post:
- *     summary: Register admin
- *     description: Allows registration of admin users.
- *     tags:
- *       - Admin
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               Username:
- *                 type: string
- *               Password:
- *                 type: string
- *               name:
- *                 type: string
- *               email:
- *                 type: string
- *     responses:
- *       '200':
- *         description: Registration successful
- *         content:
- *           application/json:
- *             schema:
- *               type: string
- *       '400':
- *         description: Bad request or missing fields
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- */
-
-app.post('/register-admin', (req, res) => {
-  console.log(req.body);
-
-  registerAdmin(req.body.Username, req.body.Password, req.body.name, req.body.email)
-    .then((result) => {
-      res.send(result);
-    })
-    .catch((error) => {
-      res.status(400).send(error.message);
-    });
-});
-
+  app.post('/register-admin', (req, res) => {
+    console.log(req.body);
+  
+    registerAdmin(req.body.Username, req.body.Password, req.body.name, req.body.email)
+      .then((result) => {
+        res.send(result);
+      })
+      .catch((error) => {
+        res.status(400).send(error.message);
+      });
+  });
 
   //Login Admin
- /**
- * @swagger
- * /login-Admin:
- *   post:
- *     summary: Admin login
- *     description: Allows an administrator to log in.
- *     tags:
- *       - Admin
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               Username:
- *                 type: string
- *               Password:
- *                 type: string
- *     responses:
- *       '200':
- *         description: Login successful
- *         content:
- *           application/json:
- *             schema:
- *               type: string
- *       '400':
- *         description: Bad request or invalid credentials
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- */
-
-app.post('/login-Admin', (req, res) => {
-  console.log(req.body);
-
-  Adminlogin(req.body.Username, req.body.Password)
-    .then((result) => {
-      let token = generateToken(result);
-      res.send(token);
-    })
-    .catch((error) => {
-      res.status(400).send(error.message);
-    });
-});
-
+  app.post('/login-Admin', (req, res) => {
+    console.log(req.body);
+  
+    Adminlogin(req.body.Username, req.body.Password)
+      .then((result) => {
+        let token = generateToken(result);
+        res.send(token);
+      })
+      .catch((error) => {
+        res.status(400).send(error.message);
+      });
+  });
   
   // //Login Security
   // app.post('/login-security', (req, res) => {
@@ -756,11 +428,12 @@ app.post('/login-Admin', (req, res) => {
   //       res.status(500).send('An error occurred during login');
   //     });
   // });
-  
+
+
   app.listen(port, () => {
-    console.log('Server running on port ${port}');
+    console.log('Example app listening on port ${port}');
   });
 })
   .catch(err => {
-  console.error('Failed to connect to MongoDB:',err);
+  console.error('Failed to connect to MongoDB:', err);
 });
