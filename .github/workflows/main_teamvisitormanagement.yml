@@ -59,4 +59,4 @@ jobs:
           app-name: 'TeamVisitorManagement'
           slot-name: 'Production'
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_731C689C1C6B459DB8A0C4292F8478D2 }}
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_D17BCDD71C034F01B04872D170DD0105 }}
