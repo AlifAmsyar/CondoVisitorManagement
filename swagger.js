@@ -154,10 +154,10 @@
  *               Password:
  *                 type: string
  *                 description: "User's password"
- *               Name:
+ *               name:
  *                 type: string
  *                 description: "User's name"
- *               Email:
+ *               email:
  *                 type: string
  *                 format: email
  *                 description: "User's email address"
