@@ -12,13 +12,17 @@ const cors = require('cors');
 app.use(express.json())
 // app.use(cors());
 
-// MongoDB setup
+// MongoDB setup Username n password
 const { MongoClient } = require('mongodb');
+
+//MongoDB setup cert
+//const { MongoClient, ServerApiVersion } = require('mongodb');
+
 //login using username&password
 const uri = 'mongodb+srv://AlifAmsyar:R2vinL3YTq1eGkft@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
+
 //login using cert
 //const uri = 'mongodb+srv://condovisitormanagement.xepoeto.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority'
-//const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const swaggerUi = require('swagger-ui-express');
 // const swaggerDocument = require('./swagger.js');
@@ -40,6 +44,12 @@ const swaggerSpec = swaggerJsdoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 //const client = new MongoClient(uri);
+
+//clientMongoCert
+// const client = new MongoClient('mongodb+srv://condovisitormanagement.xepoeto.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority', {
+//   tlsCertificateKeyFile: credentials,
+//   serverApi: ServerApiVersion.v1
+// });
 
 let visitDetailCollection;
 //let securityCollection;
