@@ -19,7 +19,7 @@ const { MongoClient } = require('mongodb');
 //const { MongoClient, ServerApiVersion } = require('mongodb');
 
 //login using username&password
-const uri = 'mongodb+srv://AlifAmsyar:R2vinL3YTq1eGkft@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
+const uri = 'mongodb+srv://AlifAmsyar:QuWOt4Me5liDrQez@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
 
 //login using cert
 //const uri = 'mongodb+srv://condovisitormanagement.xepoeto.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority'
