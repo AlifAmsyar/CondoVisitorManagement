@@ -146,7 +146,7 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
         throw new Error('Missing required fields');
       }
 
-      cosnt hashedPassword = await bcrypt.hash(reqAdminPassword, 10);
+      const hashedPassword = await bcrypt.hash(reqAdminPassword, 10);
  
       await adminCollection.insertOne({
         Username: reqAdminUsername,
