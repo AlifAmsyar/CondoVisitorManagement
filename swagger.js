@@ -25,10 +25,10 @@
  *             properties:
  *               Username:
  *                 type: string
- *                 description: "User's username"
+ *                 description: "User's Username"
  *               Password:
  *                 type: string
- *                 description: "User's password"
+ *                 description: "User's Password"
  *     responses:
  *       200:
  *         description: "User authenticated successfully"
@@ -196,9 +196,7 @@
  * /create-visit:
  *   post:
  *     tags:
- *       - Admin
  *       - User
- *       - Visitor
  *     summary: "Create a Visit"
  *     description: "Create a new visit record."
  *     requestBody:
@@ -511,5 +509,5 @@
  *               properties:
  *                 message:
  *                   type: string
- *                   description: "Error message"
- */
+ *                   description: "Error message"
+ */
