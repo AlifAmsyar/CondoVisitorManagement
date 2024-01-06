@@ -6,6 +6,21 @@
  *       type: http
  *       scheme: bearer
  *       bearerFormat: JWT
+ *     AdminAuth:
+ *       type: http
+ *       scheme: bearer
+ *       in: header
+ *       name: Authorization
+ *       description: Admin authentication token
+ *       bearerFormat: JWT
+ *     SecurityAuth:
+ *       type: http
+ *       scheme: bearer
+ *       in: header
+ *       name: Authorization
+ *       description: Security authentication token
+ *       bearerFormat: JWT
+ * 
  */
 
 /**
@@ -82,7 +97,7 @@
  *     summary: "Admin Registration"
  *     description: "Register a new admin user."
  *     security:
- *       - BearerAuth: []
+ *       - AdminAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -197,6 +212,7 @@
  *   post:
  *     tags:
  *       - User
+ *       - Visitor
  *     summary: "Create a Visit"
  *     description: "Create a new visit record."
  *     requestBody:
@@ -276,7 +292,7 @@
  *     summary: "Update a Visit"
  *     description: "Update an existing visit record by visit name."
  *     security:
- *       - BearerAuth: []
+ *       - AdminAuth: []
  *     parameters:
  *       - name: visitName
  *         in: path
@@ -357,7 +373,7 @@
  *     summary: "Delete a Visit"
  *     description: "Delete a visit detail by visit detail ID. Only accessible to admins."
  *     security:
- *       - BearerAuth: []
+ *       - AdminAuth: []
  *     parameters:
  *       - name: visitDetailId
  *         in: path
@@ -387,10 +403,12 @@
  *   get:
  *     tags:
  *       - Admin
+ *       - Security
  *     summary: "Get Visit Details"
  *     description: "Retrieve a list of visit details. Only accessible to admins."
  *     security:
- *       - BearerAuth: []
+ *       - AdminAuth: []
+ *       - SecurityAuth: []
  *     responses:
  *       200:
  *         description: "List of visit details retrieved successfully"
@@ -510,4 +528,153 @@
  *                 message:
  *                   type: string
  *                   description: "Error message"
+ */
+
+/**
+ * @swagger
+ * /register-security:
+ *   post:
+ *     tags:
+ *       - Security
+ *     summary: "Security Registration"
+ *     description: "Register a new security user."
+ *     security:
+ *       - SecurityAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               Username:
+ *                 type: string
+ *                 description: "Security's username"
+ *               Password:
+ *                 type: string
+ *                 description: "Security's password"
+ *               name:
+ *                 type: string
+ *                 description: "Security's name"
+ *     responses:
+ *       200:
+ *         description: "Security registered successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               description: "Success message"
+ *       400:
+ *         description: "Bad Request - Missing required fields"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: "Error message"
+ *       500:
+ *         description: "Internal Server Error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: "Error message"
+ */
+
+/**
+ * @swagger
+ * /login-Security:
+ *   post:
+ *     tags:
+ *       - Security
+ *     summary: "Security Login"
+ *     description: "Authenticate an admin user and generate a JWT token."
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               Username:
+ *                 type: string
+ *                 description: "Security's username"
+ *               Password:
+ *                 type: string
+ *                 description: "Security's password"
+ *     responses:
+ *       200:
+ *         description: "Security authenticated successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   description: "JWT token for authentication"
+ *       400:
+ *         description: "Bad Request - Missing required fields"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: "Error message"
+ *       401:
+ *         description: "Unauthorized - Invalid username or password"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: "Error message"
+ *       500:
+ *         description: "Internal Server Error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: "Error message"
+ */
+
+/**
+ * @swagger
+ * /get-visitor-pass/{hostId}:
+ *   get:
+ *     tags:
+ *       - Visitor
+ *     summary: Retrieve the visitor pass for a host
+ *     parameters:
+ *       - in: path
+ *         name: hostId
+ *         required: true
+ *         description: The ID of the host to retrieve the visitor pass for
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successful response with the retrieved visitor pass
+ *         content:
+ *           application/json:
+ *             example:
+ *               visitorPass: ABC123
+ *       400:
+ *         description: Bad request, missing hostId
+ *       404:
+ *         description: Host not found
+ *       500:
+ *         description: Internal server error
  */
