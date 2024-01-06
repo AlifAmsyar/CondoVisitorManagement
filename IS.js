@@ -6,13 +6,13 @@ const port = process.env.PORT || 2000;
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 // const path = require('path'); 
-
+const bcrypt = require('bcrypt');
 
 //express.json
 app.use(express.json())
-// app.use(cors());
+//app.use(cors());
 
-// MongoDB setup Username n password
+//MongoDB setup Username n password
 const { MongoClient } = require('mongodb');
 
 //MongoDB setup cert
@@ -188,6 +188,18 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     } finally {
      await client.close();
    }
+  }
+
+  //Function to generate a random visitor pass
+  function generateVisitorPass(){
+    const passLength = 8;
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+    let pass = '';
+    for (let i = 0; i < passLength; i++){
+      pass += characters.charAt(Math.floor(Math.random() * characters.Length));
+    }
+    return pass;
   }
 
   //Function Generate Token
