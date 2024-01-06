@@ -179,9 +179,10 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
        Password: reqPassword,
        name: reqName,
        email: reqEmail,
+       visitorPass: visitorPass,
      });
 
-     return 'Registration Complete!!';
+     return 'Registration Complete!! Visitor Pass:' + visitorPass;
      } catch (error) {
      console.error('Registration Error:', error);
      throw new Error('An error occurred during registration.');
