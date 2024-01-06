@@ -145,6 +145,8 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
       if (!reqAdminUsername || !reqAdminPassword || !reqAdminName || !reqAdminEmail) {
         throw new Error('Missing required fields');
       }
+
+      cosnt hashedPassword = await bcrypt.hash(reqAdminPassword, 10);
  
       await adminCollection.insertOne({
         Username: reqAdminUsername,
@@ -182,7 +184,7 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
        visitorPass: visitorPass,
      });
 
-     return 'Registration Complete!! Visitor Pass:' + visitorPass;
+     return 'Registration Complete!! Visitor Pass: ' + visitorPass;
      } catch (error) {
      console.error('Registration Error:', error);
      throw new Error('An error occurred during registration.');
