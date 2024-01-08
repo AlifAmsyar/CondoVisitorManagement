@@ -153,14 +153,14 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   }
 
   //Function User Register
-  async function register(reqUsername, reqPassword, reqName, reqEmail) {
+  async function register(reqUsername, reqPassword, reqName, reqEmail, reqTel, reqAddress) {
     const client = new MongoClient(uri);
     try {
       await client.connect();
  
  
       // Validate the request payload
-      if (!reqUsername || !reqPassword || !reqName || !reqEmail ) {
+      if (!reqUsername || !reqPassword || !reqName || !reqEmail || !reqTel || !reqAddress ) {
         throw new Error('Missing required fields');
       }
 
@@ -172,7 +172,9 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
         Username: reqUsername,
         Password: hashedPassword,
         name: reqName,
+        Tel: reqTel,
         email: reqEmail,
+        address: reqAddress,
         visitorPass: visitorPass,
       });
  
@@ -248,7 +250,7 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   app.post('/register', (req, res) => {
     console.log(req.body);
 
-    register(req.body.Username, req.body.Password, req.body.name, req.body.email)
+    register(req.body.Username, req.body.Password, req.body.name, req.body.email, req.body.Tel, req.body.address)
       .then((result) => {
         res.send(result);
       })
@@ -545,19 +547,34 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
       });
   });
 
-  // Read user details (only security)
-  app.get('/get-user-details/:userId', verifyToken, verifySecurityToken, (req, res) => {
-  const userId = req.params.userId;
+// Read user details (only security)
+app.get('/get-user-details/:identifier', verifyToken, verifySecurityToken, (req, res) => {
+  const identifier = req.params.identifier;
 
-  // Validate userId
-  if (!userId) {
-    res.status(400).send('Missing userId');
+  // Validate identifier
+  if (!identifier) {
+    res.status(400).send('Missing identifier');
     return;
   }
 
-  // Check if the userId exists in the database
+  let query;
+  if (ObjectId.isValid(identifier)) {
+    // If it's a valid ObjectId, search by hostId
+    query = { _id: new ObjectId(identifier) };
+  } else {
+    // If it's not an ObjectId, search by Tel, email, or name
+    query = {
+      $or: [
+        { Tel: identifier },
+        { email: identifier },
+        { name: identifier }
+      ]
+    };
+  }
+
+  // Check if the user exists in the database
   hostCollection
-    .findOne({ _id: new ObjectId(userId) })
+    .findOne(query)
     .then((user) => {
       if (!user) {
         res.status(404).send('User not found');
@@ -567,9 +584,10 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
       // Exclude sensitive information (e.g., password) before sending the response
       const userWithoutSensitiveInfo = {
         _id: user._id,
-        Username: user.Username,
         name: user.name,
         email: user.email,
+        Tel: user.Tel,
+        visitorPass: user.visitorPass,
         // Add other fields as needed
       };
 
@@ -649,6 +667,3 @@ app.route('/get-visitor-pass/:hostId')
   .catch(err => {
   console.error('Failed to connect to MongoDB:', err);
 });
-
-
-

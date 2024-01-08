@@ -176,6 +176,12 @@
  *                 type: string
  *                 format: email
  *                 description: "User's email address"
+ *               Tel:
+ *                 type: string
+ *                 description: "User's telephone number"
+ *               address:
+ *                 type: string
+ *                 description: "User's address"
  *     responses:
  *       200:
  *         description: "User registered successfully"
@@ -653,28 +659,106 @@
 /**
  * @swagger
  * /get-visitor-pass/{hostId}:
- *   get:
+ *   post:
  *     tags:
  *       - Visitor
- *     summary: Retrieve the visitor pass for a host
+ *     summary: "Get passVisit "
+ *     description: "Generate and update a new visitor pass for a host."
  *     parameters:
  *       - in: path
  *         name: hostId
  *         required: true
- *         description: The ID of the host to retrieve the visitor pass for
+ *         description: "ID of the host"
  *         schema:
  *           type: string
  *     responses:
  *       200:
- *         description: Successful response with the retrieved visitor pass
+ *         description: "New visitor pass generated successfully"
  *         content:
  *           application/json:
- *             example:
- *               visitorPass: ABC123
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 visitorPass:
+ *                   type: string
+ *                   description: "Generated visitor pass"
  *       400:
- *         description: Bad request, missing hostId
+ *         description: "Bad Request - Missing hostId"
  *       404:
- *         description: Host not found
+ *         description: "Host not found"
  *       500:
- *         description: Internal server error
+ *         description: "Internal Server Error"
+ */
+
+
+/**
+ * @swagger
+ * /get-user-details/{identifier}:
+ *   get:
+ *     tags:
+ *       - Security
+ *     summary: "Get User Details"
+ *     description: "Retrieve user details by hostId, Tel, email, or name."
+ *     parameters:
+ *       - in: path
+ *         name: identifier
+ *         required: true
+ *         description: "User identifier (hostId, Tel, email, or name)"
+ *         schema:
+ *           type: string
+ *     security:
+ *       - SecurityAuth: []
+ *     responses:
+ *       200:
+ *         description: "User details retrieved successfully"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   description: "User ID"
+ *                 name:
+ *                   type: string
+ *                   description: "User's name"
+ *                 email:
+ *                   type: string
+ *                   description: "User's email"
+ *                 Tel:
+ *                   type: string
+ *                   description: "User's Tel"
+ *                 visitorPass:
+ *                   type: string
+ *                   description: "Visitor Pass"
+ *       400:
+ *         description: "Bad Request - Missing identifier"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: "Error message"
+ *       404:
+ *         description: "User not found"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: "Error message"
+ *       500:
+ *         description: "Internal Server Error"
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   description: "Error message"
  */
