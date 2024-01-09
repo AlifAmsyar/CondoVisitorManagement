@@ -47,7 +47,7 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, tlsC
   visitDetailCollection = db.collection('visitDetailCollectionName');
   hostCollection = db.collection('hostCollectionName');
   securityCollection = db.collection('securityCollectionName');
-  
+
   // Start the server or perform other operations
 
   const { ObjectId } = require('mongodb');
@@ -152,14 +152,14 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, tlsC
   }
 
   //Function User Register
-  async function register(reqUsername, reqPassword, reqName, reqEmail, reqTel, reqAddress) {
+  async function register(reqUsername, reqPassword, reqname, reqemail, reqtel, reqaddress) {
     const client = new MongoClient(uri);
     try {
       await client.connect();
  
  
       // Validate the request payload
-      if (!reqUsername || !reqPassword || !reqName || !reqEmail || !reqTel || !reqAddress ) {
+      if (!reqUsername || !reqPassword || !reqname || !reqemail || !reqtel || !reqaddress ) {
         throw new Error('Missing required fields');
       }
 
@@ -170,10 +170,10 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, tlsC
       await hostCollection.insertOne({
         Username: reqUsername,
         Password: hashedPassword,
-        name: reqName,
-        Tel: reqTel,
-        email: reqEmail,
-        address: reqAddress,
+        name: reqname,
+        Tel: reqtel,
+        email: reqemail,
+        address: reqaddress,
         visitorPass: visitorPass,
       });
  
@@ -249,7 +249,7 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, tlsC
   app.post('/register', (req, res) => {
     console.log(req.body);
 
-    register(req.body.Username, req.body.Password, req.body.Name, req.body.Email, req.body.Tel, req.body.Address)
+    register(req.body.Username, req.body.Password, req.body.name, req.body.email, req.body.Tel, req.body.address)
       .then((result) => {
         res.send(result);
       })
@@ -598,7 +598,7 @@ app.get('/get-user-details/:identifier', verifyToken, verifySecurityToken, (req,
     });
 });
 
-// Visitor Get pass 
+// Visitor Get pass
 app.route('/get-visitor-pass/:hostId')
   .post((req, res) => {
     const hostId = req.params.hostId;
@@ -617,10 +617,10 @@ app.route('/get-visitor-pass/:hostId')
           return;
         }
 
-        // Generate a visitor pass
+        // Generate a new visitor pass
         const visitorPass = generateVisitorPass();
 
-        // Store the visitor pass in the database if needed
+        // Update the visitor pass in the database
         hostCollection.updateOne({ _id: new ObjectId(hostId) }, { $set: { visitorPass: visitorPass } });
 
         res.json({ visitorPass });
@@ -657,7 +657,6 @@ app.route('/get-visitor-pass/:hostId')
         res.status(500).send('An error occurred while getting the visitor pass');
       });
   });
-
 
   app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
