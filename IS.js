@@ -5,14 +5,14 @@ const port = process.env.PORT || 2000;
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
-const credentials = 'c:\Users\maams\Documents\IS\X509-cert-8080500067161675844.pem';
+// const credentials = 'c:\Users\maams\Documents\IS\X509-cert-8080500067161675844.pem';
 
 //express.json
 app.use(express.json())
 
 //MongoDB Setup Cert
-const { MongoClient,ServerApiVersion } = require('mongodb');
-const uri = 'mongodb+srv://condovisitormanagement.xepoeto.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority';
+// const { MongoClient,ServerApiVersion } = require('mongodb');
+// const uri = 'mongodb+srv://condovisitormanagement.xepoeto.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority';
 // const client = new MongoClient(uri, {
 //   tlsCertificateKeyFile: credentials,
 //   serverApi: ServerApiVersion.v1
@@ -20,8 +20,8 @@ const uri = 'mongodb+srv://condovisitormanagement.xepoeto.mongodb.net/?authSourc
 
 
 // MongoDB setup
-// const { MongoClient } = require('mongodb');
-// const uri = 'mongodb+srv://AlifAmsyar:aREjLwIIynUtupoT@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
+const { MongoClient } = require('mongodb');
+const uri = 'mongodb+srv://AlifAmsyar:46XVsr2C0HuhZBaO@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
 
 const swaggerUi = require('swagger-ui-express');
 
