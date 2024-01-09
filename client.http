@@ -21,6 +21,7 @@ Authorization: Bearer
     "Username": "abu",
     "Password": "123",
     "name":"aahh",
+    "tel":"03612213",
     "email":"aahh@gmail.com"
 }
 
