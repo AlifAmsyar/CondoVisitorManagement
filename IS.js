@@ -249,7 +249,7 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, tlsC
   app.post('/register', (req, res) => {
     console.log(req.body);
 
-    register(req.body.Username, req.body.Password, req.body.name, req.body.email, req.body.Tel, req.body.address)
+    register(req.body.Username, req.body.Password, req.body.Name, req.body.Email, req.body.Tel, req.body.Address)
       .then((result) => {
         res.send(result);
       })
