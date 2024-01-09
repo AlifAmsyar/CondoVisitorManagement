@@ -14,7 +14,7 @@
   "version": "1.0.0",
   "main": "IS.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "Start": "node IS.js"
   },
   "author": "",
   "license": "ISC",
