@@ -4,24 +4,14 @@ const app = express()
 const port = process.env.PORT || 2000;
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const bcrypt = require('bcrypt');
-// const credentials = 'c:\Users\maams\Documents\IS\X509-cert-8080500067161675844.pem';
+const credentials = 'X509-cert-3466011336185544924.pem';
 
 //express.json
 app.use(express.json())
 
-//MongoDB Setup Cert
-// const { MongoClient,ServerApiVersion } = require('mongodb');
-// const uri = 'mongodb+srv://condovisitormanagement.xepoeto.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority';
-// const client = new MongoClient(uri, {
-//   tlsCertificateKeyFile: credentials,
-//   serverApi: ServerApiVersion.v1
-// });
-
-
 // MongoDB setup
-const { MongoClient } = require('mongodb');
-const uri = 'mongodb+srv://AlifAmsyar:46XVsr2C0HuhZBaO@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
+const { MongoClient, ServerApiVersion, ObjectId} = require('mongodb');
+const uri = 'mongodb+srv://applicationcondo.zkxtny3.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority';
 
 const swaggerUi = require('swagger-ui-express');
 
@@ -48,7 +38,7 @@ let adminCollection;
 let securityCollection;
 
 
-MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, tlsCertificateKeyFile: credentials, serverApi: ServerApiVersion.v1 })
 .then(client => {
   console.log('Connected to MongoDB'); 
   const db = client.db('CondoVisitorManagement');
