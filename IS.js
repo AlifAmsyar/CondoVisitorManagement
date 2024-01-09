@@ -11,8 +11,8 @@ const credentials = 'X509-cert-3466011336185544924.pem';
 app.use(express.json())
 
 // MongoDB setup
-const { MongoClient } = require('mongodb');
-const uri = 'mongodb+srv://AlifAmsyar:7B4TLlyjiwatYV2d@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = 'mongodb+srv://applicationcondo.zkxtny3.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority';
 
 const swaggerUi = require('swagger-ui-express');
 
@@ -27,7 +27,6 @@ const options = {
   },
   apis: ['./swagger.js'],
 };
-
 const swaggerSpec = swaggerJsdoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
