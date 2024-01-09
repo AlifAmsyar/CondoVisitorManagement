@@ -10,9 +10,13 @@ const bcrypt = require('bcrypt');
 //express.json
 app.use(express.json())
 
-// MongoDB setup
+//MongoDB Setup Cert
 const { MongoClient } = require('mongodb');
-const uri = 'mongodb+srv://AlifAmsyar:PIZ04ozv8OYcyHtj@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
+const uri = 'mongodb+srv://condovisitormanagement.xepoeto.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority';
+
+// MongoDB setup
+//const { MongoClient } = require('mongodb');
+//const uri = 'mongodb+srv://AlifAmsyar:PIZ04ozv8OYcyHtj@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
 
 const swaggerUi = require('swagger-ui-express');
 
