@@ -5,14 +5,9 @@ const port = process.env.PORT || 2000;
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const bcrypt = require('bcrypt');
-//const credentials = 'X509-cert-3466011336185544924.pem';
 
 //express.json
 app.use(express.json())
-
-// MongoDB setup Cert
-//const { MongoClient, ServerApiVersion } = require('mongodb');
-//const uri = 'mongodb+srv://applicationcondo.zkxtny3.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority';
 
 //MongoDB Setup Scram
 const { MongoClient } = require('mongodb');
@@ -41,7 +36,6 @@ let hostCollection;
 let adminCollection;
 let securityCollection;
 
-//tlsCertificateKeyFile: credentials, serverApi: ServerApiVersion.v1 
 MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(client => {
   console.log('Connected to MongoDB'); 
