@@ -14,7 +14,7 @@
   "version": "1.0.0",
   "main": "IS.js",
   "scripts": {
-    "Start": "node IS.js"
+    "start": "node IS.js"
   },
   "author": "",
   "license": "ISC",
