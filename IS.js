@@ -41,13 +41,8 @@ let hostCollection;
 let adminCollection;
 let securityCollection;
 
-
-MongoClient.connect(uri, {
-   useNewUrlParser: true, 
-   useUnifiedTopology: true, 
-   //tlsCertificateKeyFile: credentials, 
-   //serverApi: ServerApiVersion.v1 
-  })
+//tlsCertificateKeyFile: credentials, serverApi: ServerApiVersion.v1 
+MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(client => {
   console.log('Connected to MongoDB'); 
   const db = client.db('CondoVisitorManagement');
