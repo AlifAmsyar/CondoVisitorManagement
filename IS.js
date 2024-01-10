@@ -9,9 +9,9 @@ const bcrypt = require('bcrypt');
 //express.json
 app.use(express.json())
 
-//MongoDB Setup Scram
+// MongoDB setup
 const { MongoClient } = require('mongodb');
-const uri = 'mongodb+srv://AlifAmsyar:ijjDvCGjwKavoyQs@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
+const uri = 'mongodb+srv://AlifAmsyar:LyqsVCvrCHHcHGg1@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
 
 const swaggerUi = require('swagger-ui-express');
 
@@ -26,6 +26,7 @@ const options = {
   },
   apis: ['./swagger.js'],
 };
+
 const swaggerSpec = swaggerJsdoc(options);
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
@@ -35,6 +36,7 @@ let visitDetailCollection;
 let hostCollection;
 let adminCollection;
 let securityCollection;
+
 
 MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
 .then(client => {
@@ -130,6 +132,11 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
         throw new Error('Missing required fields');
       }
       
+      // Check password strength
+      if (!isStrongPassword(reqAdminPassword)) {
+        throw new Error('Password does not meet strength criteria');
+      }
+
       const hashedPassword = await bcrypt.hash(reqAdminPassword, 10);
 
       await adminCollection.insertOne({
@@ -160,8 +167,17 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
         throw new Error('Missing required fields');
       }
 
+      // Check password strength
+      if (!isStrongPassword(reqPassword)) {
+        throw new Error('Your password must meet the following criteria:\n' +
+          '- At least 8 characters\n' +            // Comment: Minimum length
+          '- At least one uppercase letter\n' +    // Comment: Require an uppercase letter
+          '- At least one lowercase letter\n' +    // Comment: Require a lowercase letter
+          '- At least one number\n' +              // Comment: Require a number
+          '- At least one symbol');                 // Comment: Require a symbol
+      }
+
       const hashedPassword = await bcrypt.hash(reqPassword, 10);
-      
       const visitorPass = generateVisitorPass();
 
       await hostCollection.insertOne({
@@ -195,6 +211,23 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     return pass;
   }
 
+    // Function to check if a password is strong//
+  function isStrongPassword(password) {
+    const minLength = 8;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasDigits = /\d/.test(password);
+    const hasSpecialChars = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+    return (
+      password.length >= minLength &&
+      hasUpperCase &&
+      hasLowerCase &&
+      hasDigits &&
+      hasSpecialChars
+    );
+  }
+
   //Function Generate Token
   function generateToken(user) {
     const payload = 
@@ -203,7 +236,7 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     };
     const token = jwt.sign
     (
-      payload, 'inipassword', 
+      payload, '20Pa@ssword', 
       { expiresIn: '1h' }
     );
     return token;
@@ -216,7 +249,7 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   
     let token = header.split(' ')[1];
   
-    jwt.verify(token, 'inipassword', function (err, decoded) {
+    jwt.verify(token, '20Pa@ssword', function (err, decoded) {
       if (err) {
         return res.status(401).send('Invalid Token');
       }
@@ -468,6 +501,10 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
         throw new Error('Missing required fields');
       }
       
+      // Check password strength
+      if (!isStrongPassword(reqSecurityPassword)) {
+        throw new Error('Password does not meet strength criteria');
+      }
       const hashedPassword = await bcrypt.hash(reqSecurityPassword, 10);
 
       await securityCollection.insertOne({
@@ -493,7 +530,7 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     };
     const token = jwt.sign
     (
-      payload, 'inipassword', 
+      payload, 'itupassword', 
       { expiresIn: '1h' }
     );
     return token;
@@ -506,7 +543,7 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
     
     let token = header.split(' ')[1];
     
-    jwt.verify(token, 'inipassword', function (err, decoded) {
+    jwt.verify(token, 'itupassword', function (err, decoded) {
       if (err) {
         return res.status(401).send('Invalid Token');
       }

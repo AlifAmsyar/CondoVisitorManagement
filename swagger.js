@@ -96,8 +96,6 @@
  *       - Admin
  *     summary: "Admin Registration"
  *     description: "Register a new admin user."
- *     security:
- *       - AdminAuth: []
  *     requestBody:
  *       required: true
  *       content:
