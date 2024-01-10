@@ -3,7 +3,6 @@ const express = require('express')
 const app = express()
 const port = process.env.PORT || 2000;
 const jwt = require('jsonwebtoken');
-const cors = require('cors');
 const bcrypt = require('bcrypt');
 
 //express.json

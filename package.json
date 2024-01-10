@@ -2,7 +2,6 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "cjs": "^0.0.11",
-    "cors": "^2.8.5",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.3.0",
@@ -19,6 +18,5 @@
   },
   "author": "",
   "license": "ISC",
-  "keywords": [],
-  "devDependencies": {}
+  "keywords": []
 }
