@@ -4,7 +4,7 @@ const app = express()
 const port = process.env.PORT || 2000;
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const credentials = 'c:\Users\maams\Documents\IS\Assignment\CondoVisitorManagement\CondoVisitorManagement\X509-cert-3466011336185544924.pem';
+const credentials = 'X509-cert-3466011336185544924.pem';
 
 //express.json
 app.use(express.json())
@@ -43,7 +43,7 @@ let adminCollection;
 let securityCollection;
 
 
-MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true})
+MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true, tlsCertificateKeyFile: credentials})
 .then(client => {
   console.log('Connected to MongoDB'); 
   const db = client.db('CondoVisitorManagement');
