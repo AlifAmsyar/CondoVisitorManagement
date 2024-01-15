@@ -16,7 +16,7 @@ app.use(express.json())
 
 // MongoDB setup
 const { MongoClient } = require('mongodb');
-const uri = 'mongodb+srv://AlifAmsyar:he3F6yvSR3OdCiyV@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
+const uri = 'mongodb+srv://AlifAmsyar:yClgEJ0NqueyVL86@applicationcondo.zkxtny3.mongodb.net/?retryWrites=true&w=majority';
 
 const swaggerUi = require('swagger-ui-express');
 
@@ -274,7 +274,7 @@ MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true})
     Userlogin(req.body.Username, req.body.Password)
       .then((result) => {
         res.json(result.user); // Return user information without generating a token
-      })
+      }) 
       .catch((error) => {
         res.status(400).send(error.message);
       });
